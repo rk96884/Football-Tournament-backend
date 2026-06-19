@@ -23,9 +23,10 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Register EF Core + SQLite
+// Register the ApplicationDbContext with PostgreSQL connection string
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
