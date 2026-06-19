@@ -95,50 +95,6 @@ namespace FiveAsideTournaments.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Tournaments",
-                columns: new[] { "Id", "CostPerPlayer", "Date", "Name", "Notes", "Location_Address", "Location_MapUrl", "Location_Parking" },
-                values: new object[,]
-                {
-                    { 1, 9.17m, new DateTime(2026, 6, 13, 9, 0, 0, 0, DateTimeKind.Unspecified), "JOAP Rising Cup", "", "Barnhill High School, UB4 9LE", "", "" },
-                    { 2, 10.00m, new DateTime(2026, 6, 28, 9, 0, 0, 0, DateTimeKind.Unspecified), "FPF Tournament", "", "Rectory Park, UB5 5FA", "", "" },
-                    { 3, 10.18m, new DateTime(2026, 6, 14, 12, 30, 0, 0, DateTimeKind.Unspecified), "Oxford City Hoops Tournament", "Arrival 11:45 AM • Surface: 3G • Parking £5 (Card Only)", "Oxford City FC, Marsh Lane, Oxford, OX3 0NQ", "", "£5 (Card Only)" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Players",
-                columns: new[] { "Id", "AmountOwed", "AmountPaid", "Attending", "Name", "Notes", "Paid", "TournamentId" },
-                values: new object[,]
-                {
-                    { 1, 9.17m, 0m, "unanswered", "Kyro", "", false, 1 },
-                    { 2, 9.17m, 0m, "unanswered", "Reuben", "", false, 1 },
-                    { 3, 9.17m, 0m, "unanswered", "Aakayan", "", false, 1 },
-                    { 4, 9.17m, 0m, "unanswered", "Musa", "", false, 1 },
-                    { 5, 9.17m, 0m, "unanswered", "Mason", "", false, 1 },
-                    { 6, 9.17m, 0m, "unanswered", "Adam", "", false, 1 },
-                    { 7, 10.00m, 0m, "unanswered", "Kyro", "", false, 2 },
-                    { 8, 10.00m, 0m, "unanswered", "Reuben", "", false, 2 },
-                    { 9, 10.00m, 0m, "unanswered", "Aakayan", "", false, 2 },
-                    { 10, 10.00m, 0m, "unanswered", "Musa", "", false, 2 },
-                    { 11, 10.00m, 0m, "unanswered", "Mason", "", false, 2 },
-                    { 12, 10.00m, 0m, "unanswered", "Adam", "", false, 2 },
-                    { 13, 10.18m, 0m, "unanswered", "Kyro", "", false, 3 },
-                    { 14, 10.18m, 0m, "unanswered", "Reuben", "", false, 3 },
-                    { 15, 10.18m, 0m, "unanswered", "Aakayan", "", false, 3 },
-                    { 16, 10.18m, 0m, "unanswered", "Musa", "", false, 3 },
-                    { 17, 10.18m, 0m, "unanswered", "Mason", "", false, 3 },
-                    { 18, 10.18m, 0m, "unanswered", "Adam", "", false, 3 }
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PaymentRecords_PlayerId",
-                table: "PaymentRecords",
-                column: "PlayerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Players_TournamentId",
-                table: "Players",
-                column: "TournamentId");
         }
 
         /// <inheritdoc />
