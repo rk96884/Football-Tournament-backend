@@ -1,0 +1,160 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
+namespace FiveAsideTournaments.Migrations
+{
+    /// <inheritdoc />
+    public partial class InitialCreate : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "SeedPlayers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    AmountOwed = table.Column<decimal>(type: "TEXT", nullable: false),
+                    AmountPaid = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Paid = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Notes = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SeedPlayers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tournaments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Date = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CostPerPlayer = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Notes = table.Column<string>(type: "TEXT", nullable: true),
+                    Location_Address = table.Column<string>(type: "TEXT", nullable: true),
+                    Location_MapUrl = table.Column<string>(type: "TEXT", nullable: true),
+                    Location_Parking = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tournaments", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Players",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Attending = table.Column<string>(type: "TEXT", nullable: false),
+                    Paid = table.Column<bool>(type: "INTEGER", nullable: false),
+                    AmountOwed = table.Column<decimal>(type: "TEXT", nullable: false),
+                    AmountPaid = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Notes = table.Column<string>(type: "TEXT", nullable: true),
+                    TournamentId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Players", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Players_Tournaments_TournamentId",
+                        column: x => x.TournamentId,
+                        principalTable: "Tournaments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PaymentRecords",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    PlayerId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Amount = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentRecords", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PaymentRecords_Players_PlayerId",
+                        column: x => x.PlayerId,
+                        principalTable: "Players",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Tournaments",
+                columns: new[] { "Id", "CostPerPlayer", "Date", "Name", "Notes", "Location_Address", "Location_MapUrl", "Location_Parking" },
+                values: new object[,]
+                {
+                    { 1, 9.17m, new DateTime(2026, 6, 13, 9, 0, 0, 0, DateTimeKind.Unspecified), "JOAP Rising Cup", "", "Barnhill High School, UB4 9LE", "", "" },
+                    { 2, 10.00m, new DateTime(2026, 6, 28, 9, 0, 0, 0, DateTimeKind.Unspecified), "FPF Tournament", "", "Rectory Park, UB5 5FA", "", "" },
+                    { 3, 10.18m, new DateTime(2026, 6, 14, 12, 30, 0, 0, DateTimeKind.Unspecified), "Oxford City Hoops Tournament", "Arrival 11:45 AM • Surface: 3G • Parking £5 (Card Only)", "Oxford City FC, Marsh Lane, Oxford, OX3 0NQ", "", "£5 (Card Only)" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Players",
+                columns: new[] { "Id", "AmountOwed", "AmountPaid", "Attending", "Name", "Notes", "Paid", "TournamentId" },
+                values: new object[,]
+                {
+                    { 1, 9.17m, 0m, "unanswered", "Kyro", "", false, 1 },
+                    { 2, 9.17m, 0m, "unanswered", "Reuben", "", false, 1 },
+                    { 3, 9.17m, 0m, "unanswered", "Aakayan", "", false, 1 },
+                    { 4, 9.17m, 0m, "unanswered", "Musa", "", false, 1 },
+                    { 5, 9.17m, 0m, "unanswered", "Mason", "", false, 1 },
+                    { 6, 9.17m, 0m, "unanswered", "Adam", "", false, 1 },
+                    { 7, 10.00m, 0m, "unanswered", "Kyro", "", false, 2 },
+                    { 8, 10.00m, 0m, "unanswered", "Reuben", "", false, 2 },
+                    { 9, 10.00m, 0m, "unanswered", "Aakayan", "", false, 2 },
+                    { 10, 10.00m, 0m, "unanswered", "Musa", "", false, 2 },
+                    { 11, 10.00m, 0m, "unanswered", "Mason", "", false, 2 },
+                    { 12, 10.00m, 0m, "unanswered", "Adam", "", false, 2 },
+                    { 13, 10.18m, 0m, "unanswered", "Kyro", "", false, 3 },
+                    { 14, 10.18m, 0m, "unanswered", "Reuben", "", false, 3 },
+                    { 15, 10.18m, 0m, "unanswered", "Aakayan", "", false, 3 },
+                    { 16, 10.18m, 0m, "unanswered", "Musa", "", false, 3 },
+                    { 17, 10.18m, 0m, "unanswered", "Mason", "", false, 3 },
+                    { 18, 10.18m, 0m, "unanswered", "Adam", "", false, 3 }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentRecords_PlayerId",
+                table: "PaymentRecords",
+                column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Players_TournamentId",
+                table: "Players",
+                column: "TournamentId");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "PaymentRecords");
+
+            migrationBuilder.DropTable(
+                name: "SeedPlayers");
+
+            migrationBuilder.DropTable(
+                name: "Players");
+
+            migrationBuilder.DropTable(
+                name: "Tournaments");
+        }
+    }
+}
