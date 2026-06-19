@@ -37,8 +37,12 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
+    if (!db.SeedPlayers.Any())
+    {
+        db.SeedPlayers.AddRange(TournamentStore.DefaultSeedPlayers);
+        db.SaveChanges();
+    }
 }
-
 
 // Enable CORS
 app.UseCors("AllowAll");
