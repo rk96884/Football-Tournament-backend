@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FiveAsideTournaments.Data;      // ⭐ Needed for ApplicationDbContext
-using FiveAsideTournaments.Models;    // ⭐ Needed for SeedPlayer
+using FiveAsideTournaments.Data;
+using FiveAsideTournaments.Models;
 
 namespace FiveAsideTournaments.Controllers;
 
@@ -16,14 +16,28 @@ public class SeedController : ControllerBase
         _context = context;
     }
 
-    [HttpGet("seed")]
-    public async Task<IActionResult> GetSeedPlayers()
+    // ⭐ GET: api/seed/4  → get seed players for tournament 4
+    [HttpGet("{tournamentId}")]
+    public async Task<IActionResult> GetSeedPlayers(int tournamentId)
     {
-        var players = await _context.SeedPlayers.ToListAsync();
+        var players = await _context.SeedPlayers
+            .Where(p => p.TournamentId == tournamentId)
+            .ToListAsync();
+
         return Ok(players);
     }
 
-    [HttpPut("seed")]
+    // ⭐ POST: api/seed  → add a new seed player
+    [HttpPost]
+    public async Task<IActionResult> AddSeedPlayer([FromBody] SeedPlayer player)
+    {
+        _context.SeedPlayers.Add(player);
+        await _context.SaveChangesAsync();
+        return Ok(player);
+    }
+
+    // ⭐ PUT: api/seed  → update list of seed players
+    [HttpPut]
     public async Task<IActionResult> UpdateSeedPlayers([FromBody] List<SeedPlayer> updatedPlayers)
     {
         foreach (var updated in updatedPlayers)
@@ -39,6 +53,19 @@ public class SeedController : ControllerBase
             }
         }
 
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
+    // ⭐ DELETE: api/seed/12  → delete seed player with id 12
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteSeedPlayer(int id)
+    {
+        var player = await _context.SeedPlayers.FindAsync(id);
+        if (player == null)
+            return NotFound();
+
+        _context.SeedPlayers.Remove(player);
         await _context.SaveChangesAsync();
         return NoContent();
     }

@@ -8,4 +8,8 @@ public class SeedPlayer
     public decimal AmountPaid { get; set; }
     public bool Paid { get; set; }
     public string? Notes { get; set; }
+
+    // ⭐ REQUIRED for linking seed players to tournaments
+    public int TournamentId { get; set; }
+    public Tournament? Tournament { get; set; }
 }

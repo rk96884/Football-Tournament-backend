@@ -30,5 +30,11 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<PaymentRecord>()
             .HasKey(p => p.Id);
+
+        modelBuilder.Entity<SeedPlayer>()
+            .HasOne(sp => sp.Tournament)
+            .WithMany()
+            .HasForeignKey(sp => sp.TournamentId);
+
     }
 }
