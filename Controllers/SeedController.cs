@@ -3,70 +3,82 @@ using Microsoft.EntityFrameworkCore;
 using FiveAsideTournaments.Data;
 using FiveAsideTournaments.Models;
 
-namespace FiveAsideTournaments.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class SeedController : ControllerBase
+namespace FiveAsideTournaments.Controllers
 {
-    private readonly ApplicationDbContext _context;
-
-    public SeedController(ApplicationDbContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class SeedController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
 
-    // ⭐ GET: api/seed/4  → get seed players for tournament 4
-    [HttpGet("{tournamentId}")]
-    public async Task<IActionResult> GetSeedPlayers(int tournamentId)
-    {
-        var players = await _context.SeedPlayers
-            .Where(p => p.TournamentId == tournamentId)
-            .ToListAsync();
-
-        return Ok(players);
-    }
-
-    // ⭐ POST: api/seed  → add a new seed player
-    [HttpPost]
-    public async Task<IActionResult> AddSeedPlayer([FromBody] SeedPlayer player)
-    {
-        _context.SeedPlayers.Add(player);
-        await _context.SaveChangesAsync();
-        return Ok(player);
-    }
-
-    // ⭐ PUT: api/seed  → update list of seed players
-    [HttpPut]
-    public async Task<IActionResult> UpdateSeedPlayers([FromBody] List<SeedPlayer> updatedPlayers)
-    {
-        foreach (var updated in updatedPlayers)
+        public SeedController(ApplicationDbContext context)
         {
-            var existing = await _context.SeedPlayers.FindAsync(updated.Id);
-            if (existing != null)
-            {
-                existing.Name = updated.Name;
-                existing.AmountOwed = updated.AmountOwed;
-                existing.AmountPaid = updated.AmountPaid;
-                existing.Paid = updated.Paid;
-                existing.Notes = updated.Notes;
-            }
+            _context = context;
         }
 
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
+        // ⭐ GET: Seed players for a tournament (or master list if id = 0)
+        [HttpGet("{tournamentId}")]
+        public async Task<IActionResult> GetSeedPlayers(int tournamentId)
+        {
+            var players = await _context.SeedPlayers
+                .Where(p => p.TournamentId == tournamentId)
+                .OrderBy(p => p.Id)
+                .ToListAsync();
 
-    // ⭐ DELETE: api/seed/12  → delete seed player with id 12
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteSeedPlayer(int id)
-    {
-        var player = await _context.SeedPlayers.FindAsync(id);
-        if (player == null)
-            return NotFound();
+            return Ok(players);
+        }
 
-        _context.SeedPlayers.Remove(player);
-        await _context.SaveChangesAsync();
-        return NoContent();
+        // ⭐ PUT: Update seed players (master or tournament)
+        [HttpPut]
+        public async Task<IActionResult> UpdateSeedPlayers([FromBody] List<SeedPlayer> updatedPlayers)
+        {
+            if (updatedPlayers == null)
+                return BadRequest("No players provided.");
+
+            foreach (var updated in updatedPlayers)
+            {
+                var existing = await _context.SeedPlayers.FindAsync(updated.Id);
+
+                if (existing != null)
+                {
+                    existing.Name = updated.Name;
+                    existing.Notes = updated.Notes;
+                    existing.AmountOwed = updated.AmountOwed;
+                    existing.AmountPaid = updated.AmountPaid;
+                    existing.Paid = updated.Paid;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        // ⭐ POST: Add a new seed player (master or tournament)
+        [HttpPost]
+        public async Task<IActionResult> AddSeedPlayer([FromBody] SeedPlayer player)
+        {
+            if (player == null)
+                return BadRequest("Player data missing.");
+
+            _context.SeedPlayers.Add(player);
+            await _context.SaveChangesAsync();
+
+            return Ok(player);
+        }
+
+        // ⭐ DELETE: Remove a seed player
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSeedPlayer(int id)
+        {
+            var player = await _context.SeedPlayers.FindAsync(id);
+
+            if (player == null)
+                return NotFound();
+
+            _context.SeedPlayers.Remove(player);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

@@ -48,8 +48,7 @@ namespace FiveAsideTournaments.Controllers
             if (tournament == null)
                 return BadRequest("Tournament data missing");
 
-            var seedPlayers = await _context.SeedPlayers.ToListAsync();
-
+            // Create the tournament (no players yet)
             var newTournament = new Tournament
             {
                 Name = tournament.Name,
@@ -58,19 +57,31 @@ namespace FiveAsideTournaments.Controllers
                 KickOffTime = tournament.KickOffTime,
                 CostPerPlayer = tournament.CostPerPlayer,
                 Notes = tournament.Notes,
-                Location = tournament.Location,
-                Players = seedPlayers.Select(sp => new Player
-                {
-                    Name = sp.Name,
-                    Notes = sp.Notes,
-                    Attending = "unanswered",
-                    Paid = false,
-                    AmountPaid = 0,
-                    AmountOwed = tournament.CostPerPlayer
-                }).ToList()
+                Location = tournament.Location
             };
 
             _context.Tournaments.Add(newTournament);
+            await _context.SaveChangesAsync();
+
+            // ⭐ Load master seed team (TournamentId = 0)
+            var masterSeed = await _context.SeedPlayers
+                .Where(p => p.TournamentId == 0)
+                .ToListAsync();
+
+            // ⭐ Copy master seed players into the new tournament
+            foreach (var p in masterSeed)
+            {
+                _context.SeedPlayers.Add(new SeedPlayer
+                {
+                    Name = p.Name,
+                    Notes = p.Notes,
+                    AmountOwed = 0,
+                    AmountPaid = 0,
+                    Paid = false,
+                    TournamentId = newTournament.Id
+                });
+            }
+
             await _context.SaveChangesAsync();
 
             return Ok(newTournament);
