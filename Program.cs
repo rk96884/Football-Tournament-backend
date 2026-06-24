@@ -35,6 +35,13 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Apply migrations automatically on startup (Render-friendly)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
+
 // Apply CORS BEFORE routing
 app.UseCors("AllowFrontend");
 
