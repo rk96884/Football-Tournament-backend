@@ -35,17 +35,17 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Apply migrations automatically on startup (Render-friendly)
+// ⭐ Apply migrations BEFORE anything else
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
 }
 
-// Apply CORS BEFORE routing
+// CORS BEFORE routing
 app.UseCors("AllowFrontend");
 
-// Routing must be enabled explicitly
+// Routing
 app.UseRouting();
 
 // Swagger only in dev
@@ -55,7 +55,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Disable HTTPS redirection in production (Render handles HTTPS)
+// HTTPS only in dev
 if (app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
