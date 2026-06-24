@@ -18,11 +18,11 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        policy.WithOrigins("https://rk96884.github.io")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
@@ -36,7 +36,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Apply CORS BEFORE routing
-app.UseCors("AllowAll");
+app.UseCors("AllowFrontend");
 
 // Routing must be enabled explicitly
 app.UseRouting();
