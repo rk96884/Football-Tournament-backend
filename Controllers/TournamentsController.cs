@@ -54,6 +54,8 @@ namespace FiveAsideTournaments.Controllers
             {
                 Name = tournament.Name,
                 Date = tournament.Date,
+                MeetTime = tournament.MeetTime,
+                KickOffTime = tournament.KickOffTime,
                 CostPerPlayer = tournament.CostPerPlayer,
                 Notes = tournament.Notes,
                 Location = tournament.Location,
@@ -85,13 +87,16 @@ namespace FiveAsideTournaments.Controllers
             if (existing == null)
                 return NotFound();
 
+            if (updated.Location == null)
+                return BadRequest("Location is required.");
+
             existing.Name = updated.Name;
             existing.Date = updated.Date;
             existing.CostPerPlayer = updated.CostPerPlayer;
 
             // ⭐ FIX: Update owned type properties individually
-            existing.Location.Address = updated.Location.Address;
-            existing.Location.Parking = updated.Location.Parking;
+            existing.Location!.Address = updated.Location.Address!;
+            existing.Location!.Parking = updated.Location.Parking!;
 
             // ⭐ Notes now saves correctly
             existing.Notes = updated.Notes;

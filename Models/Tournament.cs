@@ -13,11 +13,14 @@ namespace FiveAsideTournaments.Models
 
         public DateTime? Date { get; set; }
 
+        public string? MeetTime { get; set; }
+        public string? KickOffTime { get; set; }
+
         public decimal CostPerPlayer { get; set; } = 0;
 
         public string? Notes { get; set; }
+        public TournamentLocation? Location { get; set; } = new TournamentLocation();
 
-        public TournamentLocation? Location { get; set; }
 
         public List<Player> Players { get; set; } = new();
     }
