@@ -29,13 +29,11 @@ namespace FiveAsideTournaments.Controllers
         }
 
         // ⭐ PUT: Update seed players (master or tournament)
-        [HttpPut]
-        public async Task<IActionResult> UpdateSeedPlayers([FromBody] List<SeedPlayer> updatedPlayers)
+        [HttpPut("{tournamentId}")]
+        public async Task<IActionResult> UpdateSeedPlayers(int tournamentId, [FromBody] List<SeedPlayer> updatedPlayers)
         {
             if (updatedPlayers == null || updatedPlayers.Count == 0)
                 return BadRequest("No players provided.");
-
-            var tournamentId = updatedPlayers.First().TournamentId;
 
             // ⭐ Load existing players for this tournament
             var existingPlayers = await _context.SeedPlayers
@@ -67,7 +65,7 @@ namespace FiveAsideTournaments.Controllers
                         AmountOwed = updated.AmountOwed,
                         AmountPaid = updated.AmountPaid,
                         Paid = updated.Paid,
-                        TournamentId = updated.TournamentId
+                        TournamentId = tournamentId
                     };
 
                     _context.SeedPlayers.Add(newPlayer);
