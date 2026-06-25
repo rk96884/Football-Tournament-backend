@@ -41,16 +41,38 @@ namespace FiveAsideTournaments.Controllers
 
                 if (existing != null)
                 {
+                    // Update existing
                     existing.Name = updated.Name;
                     existing.Notes = updated.Notes;
                     existing.AmountOwed = updated.AmountOwed;
                     existing.AmountPaid = updated.AmountPaid;
                     existing.Paid = updated.Paid;
                 }
+                else
+                {
+                    // Insert new
+                    _context.SeedPlayers.Add(new SeedPlayer
+                    {
+                        Name = updated.Name,
+                        Notes = updated.Notes,
+                        AmountOwed = updated.AmountOwed,
+                        AmountPaid = updated.AmountPaid,
+                        Paid = updated.Paid,
+                        TournamentId = updated.TournamentId
+                    });
+                }
             }
 
             await _context.SaveChangesAsync();
-            return NoContent();
+
+            // ⭐ Return the updated list with REAL IDs
+            var tournamentId = updatedPlayers.First().TournamentId;
+            var refreshed = await _context.SeedPlayers
+                .Where(p => p.TournamentId == tournamentId)
+                .OrderBy(p => p.Id)
+                .ToListAsync();
+
+            return Ok(refreshed);
         }
 
         // ⭐ POST: Add a new seed player (master or tournament)
