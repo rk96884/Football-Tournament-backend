@@ -7,7 +7,6 @@ namespace FiveAsideTournaments.Models
     public class Tournament
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]   // ⭐ PREVENT auto‑generated IDs
         public int Id { get; set; }
 
         [Required]

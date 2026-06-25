@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FiveAsideTournaments")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a47e6104f70075848aaa0ebf8a14ca58b20070c9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b00c40e1c93091ebffd366169938df85f7f6ade8")]
 [assembly: System.Reflection.AssemblyProductAttribute("FiveAsideTournaments")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FiveAsideTournaments")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
