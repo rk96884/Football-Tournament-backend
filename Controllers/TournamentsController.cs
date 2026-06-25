@@ -43,50 +43,51 @@ namespace FiveAsideTournaments.Controllers
 
         // Create a NEW tournament object (never trust the incoming one)
         [HttpPost]
-public async Task<ActionResult<Tournament>> CreateTournament([FromBody] Tournament tournament)
-{
-    if (tournament == null)
-        return BadRequest("Tournament data missing");
-
-    // Create the tournament (no players yet)
-    var newTournament = new Tournament
-    {
-        Name = tournament.Name,
-        Date = tournament.Date,
-        MeetTime = tournament.MeetTime,
-        KickOffTime = tournament.KickOffTime,
-        CostPerPlayer = tournament.CostPerPlayer,
-        Notes = tournament.Notes,
-        Location = tournament.Location
-    };
-
-    _context.Tournaments.Add(newTournament);
-    await _context.SaveChangesAsync();
-
-    // ⭐ Load master seed team (TournamentId = 0)
-    var masterSeed = await _context.SeedPlayers
-        .Where(p => p.TournamentId == 0)
-        .ToListAsync();
-
-    // ⭐ Copy master seed players into the new tournament
-    foreach (var p in masterSeed)
-    {
-        _context.SeedPlayers.Add(new SeedPlayer
+        public async Task<ActionResult<Tournament>> CreateTournament([FromBody] Tournament tournament)
         {
-            Name = p.Name,
-            Notes = p.Notes,
-            AmountOwed = 0,          // reset for new tournament
-            AmountPaid = 0,
-            Paid = false,
-            Attending = "unanswered", // ⭐ required field
-            TournamentId = newTournament.Id
-        });
-    }
+            if (tournament == null)
+                return BadRequest("Tournament data missing");
 
-    await _context.SaveChangesAsync();
+            // Create the tournament
+            var newTournament = new Tournament
+            {
+                Name = tournament.Name,
+                Date = tournament.Date,
+                MeetTime = tournament.MeetTime,
+                KickOffTime = tournament.KickOffTime,
+                CostPerPlayer = tournament.CostPerPlayer,
+                Notes = tournament.Notes,
+                Location = tournament.Location
+            };
 
-    return Ok(newTournament);
-}
+            _context.Tournaments.Add(newTournament);
+            await _context.SaveChangesAsync();
+
+            // ⭐ Load master seed team (TournamentId = 0)
+            var masterSeed = await _context.SeedPlayers
+                .Where(p => p.TournamentId == 0)
+                .ToListAsync();
+
+            // ⭐ Copy into REAL tournament players table
+            foreach (var p in masterSeed)
+            {
+                _context.Players.Add(new Player
+                {
+                    Name = p.Name,
+                    Notes = p.Notes,
+                    Attending = "unanswered",
+                    Paid = false,
+                    AmountPaid = 0,
+                    AmountOwed = newTournament.CostPerPlayer,
+                    TournamentId = newTournament.Id
+                });
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(newTournament);
+        }
+
         // ⭐ PUT: Update an existing tournament
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTournament(int id, [FromBody] Tournament updated)
