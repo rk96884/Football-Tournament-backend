@@ -51,8 +51,20 @@ using (var scope = app.Services.CreateScope())
         db.Tournaments.Add(new Tournament
         {
             Id = 0,
-            Name = "Master Seed Team"
+            Name = "Master Seed Team",
+            Date = null,
+            MeetTime = null,
+            KickOffTime = null,
+            CostPerPlayer = 0,
+            Notes = "",
+            Location = new TournamentLocation
+            {
+                Address = "",
+                MapUrl = "",
+                Parking = ""
+            }
         });
+
         db.SaveChanges();
     }
 }
