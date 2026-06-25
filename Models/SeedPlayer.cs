@@ -11,5 +11,6 @@ public class SeedPlayer
 
     // ⭐ REQUIRED for linking seed players to tournaments
     public int TournamentId { get; set; }
+    public string Attending { get; set; } = "unanswered";
     public Tournament? Tournament { get; set; }
 }
