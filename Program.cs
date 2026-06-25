@@ -17,16 +17,16 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
 });
 
-// CORS
+// ⭐ CORS — allow GitHub Pages
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-        policy =>
-        {
-            policy.WithOrigins("https://rk96884.github.io")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
+    options.AddPolicy(MyAllowSpecificOrigins, policy =>
+    {
+        policy
+            .WithOrigins("https://rk96884.github.io")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
 });
 
 // DB
@@ -45,21 +45,10 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-// ⭐ Correct middleware order
+// ⭐ CORRECT MIDDLEWARE ORDER
 app.UseRouting();
 
-app.UseCors(MyAllowSpecificOrigins);
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
+app.UseCors(MyAllowSpecificOrigins);   // MUST be here
 
 app.UseAuthorization();
 
