@@ -1,4 +1,5 @@
 using FiveAsideTournaments.Data;
+using FiveAsideTournaments.Models;   // ⭐ ADD THIS
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,12 +44,23 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
+
+    // ⭐ Ensure master tournament exists (fixes FK violation)
+    if (!db.Tournaments.Any(t => t.Id == 0))
+    {
+        db.Tournaments.Add(new Tournament
+        {
+            Id = 0,
+            Name = "Master Seed Team"
+        });
+        db.SaveChanges();
+    }
 }
 
 // ⭐ CORRECT MIDDLEWARE ORDER
 app.UseRouting();
 
-app.UseCors(MyAllowSpecificOrigins);   // MUST be here
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 
