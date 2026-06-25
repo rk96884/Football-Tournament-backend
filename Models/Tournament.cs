@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;   // ⭐ REQUIRED for DatabaseGenerated
 
 namespace FiveAsideTournaments.Models
 {
     public class Tournament
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]   // ⭐ PREVENT auto‑generated IDs
         public int Id { get; set; }
 
         [Required]
@@ -19,13 +21,13 @@ namespace FiveAsideTournaments.Models
         public decimal CostPerPlayer { get; set; } = 0;
 
         public string? Notes { get; set; }
-        public TournamentLocation? Location { get; set; } = new TournamentLocation();
 
+        public TournamentLocation? Location { get; set; } = new TournamentLocation();
 
         public List<Player> Players { get; set; } = new();
     }
 
-    [Owned]   // ⭐ THIS IS THE FIX
+    [Owned]
     public class TournamentLocation
     {
         public string? Address { get; set; }
