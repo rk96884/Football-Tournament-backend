@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 // Bind to Render port
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5201";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
@@ -18,12 +20,13 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins("https://rk96884.github.io")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("https://rk96884.github.io")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
 });
 
 // DB
@@ -42,20 +45,17 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-// CORS BEFORE routing
-app.UseCors("AllowFrontend");
-
-// Routing
+// ⭐ Correct middleware order
 app.UseRouting();
 
-// Swagger only in dev
+app.UseCors(MyAllowSpecificOrigins);
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// HTTPS only in dev
 if (app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
