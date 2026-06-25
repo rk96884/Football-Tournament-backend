@@ -93,6 +93,57 @@ namespace FiveAsideTournaments.Controllers
             return NoContent();
         }
 
+
+        [HttpPut("bulkupdate/{tournamentId}")]
+        public async Task<IActionResult> BulkUpdatePlayers(int tournamentId, [FromBody] List<Player> players)
+        {
+            if (players == null)
+                return BadRequest("No players provided.");
+
+            // Load existing players for this tournament
+            var existing = await _context.Players
+                .Where(p => p.TournamentId == tournamentId)
+                .ToListAsync();
+
+            // Update existing players
+            foreach (var p in players)
+            {
+                var match = existing.FirstOrDefault(x => x.Id == p.Id);
+
+                if (match != null)
+                {
+                    match.Name = p.Name;
+                    match.Notes = p.Notes;
+                    match.Attending = p.Attending;
+                    match.Paid = p.Paid;
+                    match.AmountPaid = p.AmountPaid;
+                    match.AmountOwed = p.AmountOwed;
+                }
+                else
+                {
+                    // New player
+                    p.TournamentId = tournamentId;
+                    _context.Players.Add(p);
+                }
+            }
+
+            // Remove players that were deleted in the UI
+            foreach (var old in existing)
+            {
+                if (!players.Any(p => p.Id == old.Id))
+                    _context.Players.Remove(old);
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Return updated list
+            var updated = await _context.Players
+                .Where(p => p.TournamentId == tournamentId)
+                .ToListAsync();
+
+            return Ok(updated);
+        }
+
         // ⭐ DELETE: Remove a player
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePlayer(int id)
