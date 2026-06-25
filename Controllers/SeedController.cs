@@ -55,6 +55,10 @@ namespace FiveAsideTournaments.Controllers
             // ⭐ Insert or update players
             foreach (var updated in updatedPlayers)
             {
+                // Ensure Attending always has a value
+                if (string.IsNullOrWhiteSpace(updated.Attending))
+                    updated.Attending = "unanswered";
+
                 if (updated.Id == 0)
                 {
                     // New player
@@ -65,6 +69,7 @@ namespace FiveAsideTournaments.Controllers
                         AmountOwed = updated.AmountOwed,
                         AmountPaid = updated.AmountPaid,
                         Paid = updated.Paid,
+                        Attending = updated.Attending,
                         TournamentId = tournamentId
                     };
 
@@ -82,6 +87,7 @@ namespace FiveAsideTournaments.Controllers
                         existing.AmountOwed = updated.AmountOwed;
                         existing.AmountPaid = updated.AmountPaid;
                         existing.Paid = updated.Paid;
+                        existing.Attending = updated.Attending;
                     }
                 }
             }
@@ -103,6 +109,9 @@ namespace FiveAsideTournaments.Controllers
         {
             if (player == null)
                 return BadRequest("Player data missing.");
+
+            if (string.IsNullOrWhiteSpace(player.Attending))
+                player.Attending = "unanswered";
 
             _context.SeedPlayers.Add(player);
             await _context.SaveChangesAsync();
