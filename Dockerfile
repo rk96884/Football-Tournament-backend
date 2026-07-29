@@ -1,24 +1,25 @@
-# Use the official .NET SDK image to build the app
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
+WORKDIR /src
 
-# Copy everything and restore
+# Copy everything
 COPY . .
+
+# Restore dependencies
 RUN dotnet restore
 
-# Build the app
-RUN dotnet publish -c Release -o out
+# Publish the app
+RUN dotnet publish -c Release -o /app
 
-# Use the ASP.NET runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 
 # Copy published output
-COPY --from=build /app/out .
+COPY --from=build /app .
 
-# Expose port 10000 for Render
-ENV ASPNETCORE_URLS=http://0.0.0.0:10000
-EXPOSE 10000
+# Expose port (Render sets $PORT automatically)
+EXPOSE 8080
 
-# Run the app
+# Start the app
 ENTRYPOINT ["dotnet", "FiveAsideTournaments.dll"]
