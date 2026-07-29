@@ -34,6 +34,9 @@ builder.Services.AddCors(options =>
 
 
 // ⭐ Database — prefer Render env var, fallback to appsettings.json
+
+Console.WriteLine("CONNECTION_STRING = " + builder.Configuration["CONNECTION_STRING"]);
+
 var connectionString =
     builder.Configuration["CONNECTION_STRING"] ??
     builder.Configuration.GetConnectionString("DefaultConnection");
