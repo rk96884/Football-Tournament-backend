@@ -21,8 +21,5 @@ COPY --from=build /app .
 # Expose port (Render sets $PORT automatically)
 EXPOSE 8080
 
-# Disable IPv6 so Npgsql uses IPv4 only
-RUN echo 'precedence ::ffff:0:0/96  100' >> /etc/gai.conf
-
 # Start the app
 ENTRYPOINT ["dotnet", "FiveAsideTournaments.dll"]

@@ -32,9 +32,14 @@ builder.Services.AddCors(options =>
     });
 });
 
-// ⭐ Database
+
+// ⭐ Database — prefer Render env var, fallback to appsettings.json
+var connectionString =
+    builder.Configuration["CONNECTION_STRING"] ??
+    builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
