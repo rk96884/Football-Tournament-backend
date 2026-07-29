@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddEnvironmentVariables();
+
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 // ⭐ Bind to Render port
