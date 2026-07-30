@@ -53,7 +53,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
+    // db.Database.Migrate();
 
     // ⭐ Remove duplicate master tournaments (Ids 6,7,8,9,10…)
     var duplicates = db.Tournaments
