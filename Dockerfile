@@ -12,8 +12,10 @@ RUN dotnet restore
 RUN dotnet publish -c Release -o /app
 
 # Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-bullseye-slim AS final
 WORKDIR /app
+
+ENV ASPNETCORE_URLS=http://+:8080
 
 # Copy published output
 COPY --from=build /app .
