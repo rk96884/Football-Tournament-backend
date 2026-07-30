@@ -47,9 +47,12 @@ using (var scope = app.Services.CreateScope())
     // db.Database.Migrate();
 }
 
+// ⭐ REQUIRED for Render HTTPS → container HTTP
+app.UseHttpsRedirection();
+
 app.UseRouting();
 
-// ⭐ FIX: use the correct policy name
+// ⭐ Correct policy name
 app.UseCors("_myAllowSpecificOrigins");
 
 app.UseAuthorization();
