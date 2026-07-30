@@ -33,6 +33,7 @@ var connectionString =
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
+
 builder.Services.AddHostedService<MasterSeedInitializer>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -47,7 +48,12 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseRouting();
+
+// ⭐ FIX: use the correct policy name
 app.UseCors("_myAllowSpecificOrigins");
+
 app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();
