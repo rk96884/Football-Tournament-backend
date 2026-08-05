@@ -19,7 +19,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("_myAllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("https://rk96884.github.io")
+        policy.WithOrigins(
+            "https://rk96884.github.io",   // production
+            "http://localhost:5173"        // development
+            )
               .AllowAnyHeader()
               .AllowAnyMethod();
     });

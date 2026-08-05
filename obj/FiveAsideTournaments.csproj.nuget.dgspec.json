@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\rishi\\FiveAsideApp\\backend\\FiveAsideTournaments.csproj": {}
+    "C:\\Users\\rishi\\Football-Tournament-App\\backend\\FiveAsideTournaments.csproj": {}
   },
   "projects": {
-    "C:\\Users\\rishi\\FiveAsideApp\\backend\\FiveAsideTournaments.csproj": {
+    "C:\\Users\\rishi\\Football-Tournament-App\\backend\\FiveAsideTournaments.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\rishi\\FiveAsideApp\\backend\\FiveAsideTournaments.csproj",
+        "projectUniqueName": "C:\\Users\\rishi\\Football-Tournament-App\\backend\\FiveAsideTournaments.csproj",
         "projectName": "FiveAsideTournaments",
-        "projectPath": "C:\\Users\\rishi\\FiveAsideApp\\backend\\FiveAsideTournaments.csproj",
+        "projectPath": "C:\\Users\\rishi\\Football-Tournament-App\\backend\\FiveAsideTournaments.csproj",
         "packagesPath": "C:\\Users\\rishi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\rishi\\FiveAsideApp\\backend\\obj\\",
+        "outputPath": "C:\\Users\\rishi\\Football-Tournament-App\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\rishi\\AppData\\Roaming\\NuGet\\NuGet.Config"

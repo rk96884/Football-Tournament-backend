@@ -41,6 +41,14 @@ namespace FiveAsideTournaments.Controllers
             return Ok(tournament);
         }
 
+        private string NormalizeTime(string? t)
+        {
+            if (string.IsNullOrWhiteSpace(t)) return "";
+            // Accept "HH:mm" or "HH:mm:ss"
+            return t.Length >= 5 ? t.Substring(0, 5) : t;
+        }
+
+
         // Create a NEW tournament object (never trust the incoming one)
         [HttpPost]
         public async Task<ActionResult<Tournament>> CreateTournament([FromBody] Tournament tournament)
@@ -53,8 +61,8 @@ namespace FiveAsideTournaments.Controllers
             {
                 Name = tournament.Name,
                 Date = tournament.Date,
-                MeetTime = tournament.MeetTime,
-                KickOffTime = tournament.KickOffTime,
+                MeetTime = NormalizeTime(tournament.MeetTime),
+                KickOffTime = NormalizeTime(tournament.KickOffTime),
                 CostPerPlayer = tournament.CostPerPlayer,
                 Notes = tournament.Notes,
                 Location = tournament.Location
@@ -105,6 +113,9 @@ namespace FiveAsideTournaments.Controllers
             existing.Name = updated.Name;
             existing.Date = updated.Date;
             existing.CostPerPlayer = updated.CostPerPlayer;
+            existing.MeetTime = NormalizeTime(updated.MeetTime);
+            existing.KickOffTime = NormalizeTime(updated.KickOffTime);
+
 
             // ⭐ FIX: Update owned type properties individually
             existing.Location!.Address = updated.Location.Address!;
