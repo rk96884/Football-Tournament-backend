@@ -1,5 +1,6 @@
 using FiveAsideTournaments.Data;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,15 +29,25 @@ builder.Services.AddCors(options =>
     });
 });
 
-Console.WriteLine("CONNECTION_STRING = " + builder.Configuration["CONNECTION_STRING"]);
-
 var connectionString =
     builder.Configuration["CONNECTION_STRING"] ??
     builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException("A PostgreSQL connection string is required.");
 
+var connectionBuilder = new NpgsqlConnectionStringBuilder(connectionString)
+{
+    Pooling = true,
+    MaxPoolSize = 10,
+    Timeout = 5,
+    CommandTimeout = 15
+};
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionBuilder.ConnectionString));
+
+builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<MasterSeedInitializer>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

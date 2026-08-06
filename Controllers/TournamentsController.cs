@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FiveAsideTournaments.Data;
 using FiveAsideTournaments.Models;
+using FiveAsideTournaments.Dtos;
+using FiveAsideTournaments.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FiveAsideTournaments.Controllers
 {
@@ -10,19 +13,36 @@ namespace FiveAsideTournaments.Controllers
     public class TournamentsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMemoryCache _cache;
 
-        public TournamentsController(ApplicationDbContext context)
+        public TournamentsController(ApplicationDbContext context, IMemoryCache cache)
         {
             _context = context;
+            _cache = cache;
         }
 
         // ⭐ GET: All tournaments (with players)
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Tournament>>> GetTournaments()
+        public async Task<ActionResult<IEnumerable<TournamentSummaryDto>>> GetTournaments()
         {
-            var tournaments = await _context.Tournaments
-                .Include(t => t.Players)
-                .ToListAsync();
+            var tournaments = await _cache.GetOrCreateAsync(
+                CacheKeys.TournamentOverview,
+                async entry =>
+                {
+                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(45);
+
+                    return await _context.Tournaments
+                        .AsNoTracking()
+                        .Where(t => t.Name != "Master Seed Team")
+                        .OrderBy(t => t.Date)
+                        .Select(t => new TournamentSummaryDto(
+                            t.Id,
+                            t.Name,
+                            t.Date,
+                            t.Location != null ? t.Location.Address : null,
+                            t.Players.Count))
+                        .ToListAsync();
+                });
 
             return Ok(tournaments);
         }
@@ -32,6 +52,7 @@ namespace FiveAsideTournaments.Controllers
         public async Task<ActionResult<Tournament>> GetTournament(int id)
         {
             var tournament = await _context.Tournaments
+                .AsNoTracking()
                 .Include(t => t.Players)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
@@ -93,6 +114,8 @@ namespace FiveAsideTournaments.Controllers
 
             await _context.SaveChangesAsync();
 
+            _cache.Remove(CacheKeys.TournamentOverview);
+
             return Ok(newTournament);
         }
 
@@ -134,6 +157,8 @@ namespace FiveAsideTournaments.Controllers
             Console.WriteLine("==========================");
             await _context.SaveChangesAsync();
 
+            _cache.Remove(CacheKeys.TournamentOverview);
+
             return NoContent();
 
         }
@@ -154,6 +179,8 @@ namespace FiveAsideTournaments.Controllers
             _context.Tournaments.Remove(tournament);
 
             await _context.SaveChangesAsync();
+
+            _cache.Remove(CacheKeys.TournamentOverview);
 
             return NoContent();
         }

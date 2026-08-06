@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FiveAsideTournaments.Data;
 using FiveAsideTournaments.Models;
+using FiveAsideTournaments.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FiveAsideTournaments.Controllers
 {
@@ -10,10 +12,12 @@ namespace FiveAsideTournaments.Controllers
     public class PlayersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMemoryCache _cache;
 
-        public PlayersController(ApplicationDbContext context)
+        public PlayersController(ApplicationDbContext context, IMemoryCache cache)
         {
             _context = context;
+            _cache = cache;
         }
 
         // ⭐ GET: All players for a tournament
@@ -21,6 +25,7 @@ namespace FiveAsideTournaments.Controllers
         public async Task<ActionResult<IEnumerable<Player>>> GetPlayersForTournament(int tournamentId)
         {
             var players = await _context.Players
+                .AsNoTracking()
                 .Where(p => p.TournamentId == tournamentId)
                 .ToListAsync();
 
@@ -68,6 +73,8 @@ namespace FiveAsideTournaments.Controllers
             tournament.Players.Add(newPlayer);
             await _context.SaveChangesAsync();
 
+            _cache.Remove(CacheKeys.TournamentOverview);
+
             return Ok(newPlayer);
         }
 
@@ -89,6 +96,8 @@ namespace FiveAsideTournaments.Controllers
             existing.Notes = updated.Notes;
 
             await _context.SaveChangesAsync();
+
+            _cache.Remove(CacheKeys.TournamentOverview);
 
             return NoContent();
         }
@@ -136,6 +145,8 @@ namespace FiveAsideTournaments.Controllers
 
             await _context.SaveChangesAsync();
 
+            _cache.Remove(CacheKeys.TournamentOverview);
+
             // Return updated list
             var updated = await _context.Players
                 .Where(p => p.TournamentId == tournamentId)
@@ -155,6 +166,8 @@ namespace FiveAsideTournaments.Controllers
 
             _context.Players.Remove(player);
             await _context.SaveChangesAsync();
+
+            _cache.Remove(CacheKeys.TournamentOverview);
 
             return NoContent();
         }

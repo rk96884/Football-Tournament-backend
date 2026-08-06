@@ -2,7 +2,7 @@ using FiveAsideTournaments.Data;
 using FiveAsideTournaments.Models;
 using Microsoft.EntityFrameworkCore;
 
-public class MasterSeedInitializer : IHostedService
+public class MasterSeedInitializer : BackgroundService
 {
     private readonly IServiceProvider _services;
 
@@ -11,8 +11,11 @@ public class MasterSeedInitializer : IHostedService
         _services = services;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
+        // Allow the web host to begin accepting requests before touching the database.
+        await Task.Yield();
+
         using var scope = _services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
@@ -70,5 +73,4 @@ public class MasterSeedInitializer : IHostedService
         Console.WriteLine("MasterSeedInitializer failed after retries — continuing without seeding.");
     }
 
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }
