@@ -5,4 +5,8 @@ public sealed record TournamentSummaryDto(
     string Name,
     DateTime? Date,
     string? Address,
-    int PlayerCount);
+    int PlayerCount,
+    int ConfirmedCount,
+    int AwaitingCount,
+    int PaidCount,
+    decimal OutstandingAmount);

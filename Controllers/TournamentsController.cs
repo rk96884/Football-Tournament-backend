@@ -40,7 +40,11 @@ namespace FiveAsideTournaments.Controllers
                             t.Name,
                             t.Date,
                             t.Location != null ? t.Location.Address : null,
-                            t.Players.Count))
+                            t.Players.Count,
+                            t.Players.Count(p => p.Attending == "attending"),
+                            t.Players.Count(p => p.Attending == "unanswered"),
+                            t.Players.Count(p => p.Paid),
+                            t.Players.Sum(p => p.AmountOwed - p.AmountPaid)))
                         .ToListAsync();
                 });
 
